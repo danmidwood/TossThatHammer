@@ -4,6 +4,10 @@ obj/
 *.svd
 *.exe
 *.apk
+*.suo
+*.user
+*.pidb
+*.userprefs
 
 !Library/*.asset
 !Library/AssetImportState
