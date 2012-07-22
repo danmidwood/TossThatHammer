@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour {
 				remainingStageTime -= Time.deltaTime;
 				
 				
-				if(remainingStageTime <= 0 && !completedScene)
+				if(remainingStageTime <= -10 && !completedScene)
 				{
 					LoseScene();
 				}
