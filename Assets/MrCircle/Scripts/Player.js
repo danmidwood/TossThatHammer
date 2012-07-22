@@ -9,33 +9,59 @@ var scoreBoard: GameObject;
 
 function Start () {
 
-	var circle = GameObject.Find("base");
+	zoneFunctions.push(inNorthEast);
+	zoneFunctions.push(inNorthWest);
+	zoneFunctions.push(inSouthWest);
+	zoneFunctions.push(inSouthEast);
 
-	Debug.Log(circle.renderer.bounds);
+	
 }
 
-function inNorthWest(gameObject : GameObject, touchPosition : Vector3)
+function inNorthWest(x: float, z:float) {
+	return x < 0 && z > 0;
+}
+
+function inNorthEast(x: float, z:float) {
+	return x > 0 && z > 0;
+}
+
+function inSouthWest(x: float, z:float) {
+	return x < 0 && z < 0;
+}
+
+function inSouthEast(x: float, z:float) {
+	return x > 0 && z < 0;
+}
+
+
+
+var zoneFunctions : Array = new Array();
+
+var chosenZoneFunctionId : int = 0;
+
+function nextZone() {
+	chosenZoneFunctionId = (chosenZoneFunctionId + 1) % 4;
+}
+
+function currentZoneFunction() {
+	return zoneFunctions[chosenZoneFunctionId];
+}
+
+function inZone(gameObject : GameObject, touchPosition : Vector3, criteria: Function )
 {
 	var worldPosition = touchPositionToWorldLocation(touchPosition);	
 	var objectCenter = gameObject.renderer.bounds.center;
 	
 	var pointConvertor = gameObject.renderer.worldToLocalMatrix;
-	
-    // var localCenter = pointConvertor.MultiplyPoint(worldCenter);
-	// var localPosition = pointConvertor.MultiplyPoint(worldPosition);
 
 	var circleX = worldPosition.x - objectCenter.x;
 	var circleY = worldPosition.y - objectCenter.y;
 	var circleZ = worldPosition.z - objectCenter.z;
-	// var localPosition = Camera.main.ScreenToWorldPoint(touchPosition);
-	// Debug.Log("Local Center is " + localCenter);
-	// Debug.Log("Local position is " + localPosition);
 
 	var positionDebugText = "World Touch: " + worldPosition.x + ", " + worldPosition.y + ", " + worldPosition.z;
 	positionDebugText = positionDebugText + "\nCircle Touch: " + circleX + ", " + circleY+ ", " + circleZ;
 	touchLocationLabel2.text = positionDebugText;
-	return circleX < 0 && circleZ > 0;
-	//  && worldPosition.z > worldCenter.z
+	return criteria(circleX, circleZ);
 }
 
 
@@ -79,7 +105,8 @@ function Update () {
         	// Move object across XY plane
         	// transform.Translate (touchDeltaPosition.x * speed, 0, touchDeltaPosition.y * speed);	
 
-        	if ( inNorthWest(hit.collider.gameObject, hit.point)) {
+        	if ( inZone(hit.collider.gameObject, hit.point, currentZoneFunction())) {
+        		nextZone();
         		up(scoreBoard);
         	}
          

@@ -1,7 +1,9 @@
 #pragma strict
 
 
-var points = 1;
+var points = 80;
+var handicap = 0.05;
+var hammer : GameObject;
 
 function Start () {
 
@@ -17,8 +19,8 @@ function Update () {
 
 
 function down(gameObject :GameObject) {
-	gameObject.transform.localScale -= Vector3(0,0.2,0); 
-	gameObject.transform.position -= Vector3(0, 0,0.2);
+	gameObject.transform.localScale -= Vector3(0, handicap, 0); 
+	gameObject.transform.position -= Vector3(0, 0, handicap);
 }
 
 function up()
@@ -30,6 +32,7 @@ function up()
 	}
 	else
 	{
+		hammer.SetActiveRecursively(true);
 		gameObject.SendMessage("Win");
 	}
 }
