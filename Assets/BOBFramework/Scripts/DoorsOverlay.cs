@@ -23,6 +23,7 @@ public class DoorsOverlay : MonoBehaviour {
 	public Texture2D largeLogoBIGPIXEL;
 	public Texture2D largeLogoFGOL;
 	public Texture2D largeLogoINDIESKIES;
+	public Texture2D largeLogoONIMOBI;
 	
 	// Use this for initialization
 	void Start () {
@@ -43,9 +44,9 @@ public class DoorsOverlay : MonoBehaviour {
 		float doorsCloseAmount = GameManager.doorsCloseTimer;
 
 		
-		GUI.DrawTexture(new Rect(0, ((1 - doorsCloseAmount) * -320), 960, 320), topDoorTex);
-		GUI.DrawTexture(new Rect(0, 320 + ((1 - doorsCloseAmount) * 320), 960, 320), bottomDoorTex);
-		
+		GUI.DrawTexture(new Rect(0, ((1 - doorsCloseAmount) * -327), 960, 327), topDoorTex);
+		GUI.DrawTexture(new Rect(0, 327 + ((1 - doorsCloseAmount) * 327), 960, 327), bottomDoorTex);
+				
 		ManageThumbs();
 		if (GameManager.showGameOverGraphics)
 		{
@@ -73,6 +74,57 @@ public class DoorsOverlay : MonoBehaviour {
 		{
 			GameManager.HideThumbs();
 		}
+		
+			if (GameManager.justLostGame)
+			{
+				GUI.Box(new Rect(0, -90 + (135 * thumbsPos), 960, 40), "STAGE FAILED");
+				
+				string lostString = GameManager.remainingLives.ToString() + " LIVES REMAINING";
+				if (GameManager.remainingLives == 1)
+				{
+					lostString = "ONE LIFE LEFT...";
+				}
+				GUI.Box(new Rect(0, 670 - (120 * thumbsPos), 960, 40), lostString);
+			}
+			else
+			{
+				int winStringNumber = (GameManager.score / 100) % 7;
+				string winString = "Well done!";
+				
+				switch (winStringNumber)
+				{
+					case 0:
+						winString = "GO GET 'EM!";
+						break;
+					
+					case 1:
+						winString = "GREAT JOB, TIGER!";
+						break;
+					
+					case 2:
+						winString = "NICE WORK!";
+						break;
+					
+					case 3:
+						winString = "KEEP IT UP!";
+						break;
+					
+					case 4:
+						winString = "SUPER!";
+						break;
+					
+					case 5:
+						winString = "JUST LIKE A PRO";
+						break;
+					
+					case 6:
+						winString = "FANTASTIC!";
+						break;
+				}
+				
+				//GUI.Box(new Rect(0, -670 + (175 * thumbsPos), 960, 40), winString);
+				
+			}
 	}
 	
 	void ManageStudioLogo()
@@ -82,8 +134,11 @@ public class DoorsOverlay : MonoBehaviour {
 		{
 			logoTimer = -logoTimer;
 		}
-		
-		GUI.DrawTexture(new Rect(180 , 70 + (640 * logoTimer), 600, 500), LargeLogoForStudio(GameManager.StudioForScene(GameManager.nextSceneNumber)), ScaleMode.ScaleToFit, true, 0);
+		if (LargeLogoForStudio(GameManager.StudioForScene(GameManager.nextSceneNumber)) != null)
+		{
+			//was 600 x 500
+			GUI.DrawTexture(new Rect(180 , 120 + (640 * logoTimer), 600, 400), LargeLogoForStudio(GameManager.StudioForScene(GameManager.nextSceneNumber)), ScaleMode.ScaleToFit, true, 0);
+		}
 	}
 	
 	void ManageGameOver()
@@ -111,6 +166,10 @@ public class DoorsOverlay : MonoBehaviour {
 		{
 		case MoreGamesGUI.StudioHandle.SPILTMILK:
 			return largeLogoSPILTMILK;
+		case MoreGamesGUI.StudioHandle.BIGPIXEL:
+			return largeLogoBIGPIXEL;
+		case MoreGamesGUI.StudioHandle.AGAITCHESON:
+			return largeLogoAGAITCHESON;
 			
 		default:
 			return null;

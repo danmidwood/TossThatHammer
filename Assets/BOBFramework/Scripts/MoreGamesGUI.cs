@@ -12,6 +12,7 @@ public class MoreGamesGUI : MonoBehaviour {
 		BIGPIXEL,
 		INDIESKIES,
 		FGOL,
+		ONIMOBI,
 		endOfList
 	}
 	
@@ -31,6 +32,10 @@ public class MoreGamesGUI : MonoBehaviour {
 	public Texture2D logoBIGPIXEL;
 	public Texture2D logoINDIESKIES;
 	public Texture2D logoFGOL;
+	public Texture2D logoONIMOBI;
+	
+	public bool goBackToTitle;
+	public float timeToTitle;
 	
 	private Vector2 scrollPosition = new Vector2();
 	
@@ -38,13 +43,18 @@ public class MoreGamesGUI : MonoBehaviour {
 	
 	private List<int> orderedStudios;
 	
+	public SFX buttonPress;	
+	AudioManager _audioManager;
+	
 	// Use this for initialization
 	void Start () {
 		PopulateStudioList();
+		_audioManager = GetComponentInChildren<AudioManager>();
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update () 
+	{
 		var tempTouch = Input.touches[0];
 		
 		if(tempTouch.phase == TouchPhase.Moved)
@@ -108,7 +118,18 @@ public class MoreGamesGUI : MonoBehaviour {
 		
 		if(GUI.Button(new Rect(5, 5, 96, 76), "", backButtonStyle))
 		{
-			ReturnToTitleScreen();
+			PlaySelectSound();
+			goBackToTitle = true;
+			//ReturnToTitleScreen();
+		}
+		
+		if (goBackToTitle)
+		{
+			timeToTitle += Time.deltaTime;
+			if (timeToTitle > 0.25f)
+			{
+				ReturnToTitleScreen();
+			}
 		}
 		
 		GUI.skin = null;
@@ -145,6 +166,10 @@ public class MoreGamesGUI : MonoBehaviour {
 			case StudioHandle.FGOL:
 				tempString = "Future Games of London";
 				break;	
+			
+			case StudioHandle.ONIMOBI:
+				tempString = "Onimobi";
+				break;	
 		}
 		
 		return tempString;
@@ -179,6 +204,11 @@ public class MoreGamesGUI : MonoBehaviour {
 			case StudioHandle.FGOL:
 				tempString = "Hungry Shark";
 				break;	
+			
+			case StudioHandle.ONIMOBI:
+				tempString = "Leaf Rider";
+				break;	
+		
 		}
 		
 		return tempString;
@@ -212,6 +242,10 @@ public class MoreGamesGUI : MonoBehaviour {
 		
 			case StudioHandle.FGOL:
 				tempURL = "http://www.futuregamesoflondon.com/";
+				break;	
+			
+			case StudioHandle.ONIMOBI:
+				tempURL = "about:blank";
 				break;	
 		}
 		
@@ -249,6 +283,11 @@ public class MoreGamesGUI : MonoBehaviour {
 			case StudioHandle.FGOL:
 				tempURL = "http://itunes.apple.com/us/app/hungry-shark-part-3/id408369543?mt=8";
 				break;	
+			
+			case StudioHandle.ONIMOBI:
+				tempURL = "about:blank";
+				break;	
+		
 		}
 		
 		Application.OpenURL(tempURL);
@@ -275,7 +314,10 @@ public class MoreGamesGUI : MonoBehaviour {
 		
 			case StudioHandle.FGOL:
 				return logoFGOL;
-
+			
+			case StudioHandle.ONIMOBI:
+				return logoONIMOBI;
+			
 			default:
 				return null;
 		}
@@ -299,5 +341,10 @@ public class MoreGamesGUI : MonoBehaviour {
 				orderedStudios.Add(nextNumber);
 			}
 		}
+	}
+		
+	void PlaySelectSound()
+	{
+		_audioManager.PlaySFX(buttonPress);
 	}
 }

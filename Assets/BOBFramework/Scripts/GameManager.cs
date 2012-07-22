@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour {
 	public static int highScore;
 	
 	public static bool completedScene;
+	public static bool delayForCompletion;
+	public static float completionDelay = 0;
 	
 	public static float remainingStageTime = 7;
 	public static bool stageIsPlay;
@@ -33,15 +35,23 @@ public class GameManager : MonoBehaviour {
 	public static bool justLeftGameOver = false;
 	
 	public static bool showGameOverGraphics;
+	public static bool justLostGame;
+	public static bool returnToMainMenu;
+	public static bool justLeftTitleScreen;
+	
+	static AudioManager _audioManager;
 	
 	// Use this for initialization
 	void Start () {
 		GUIManager.CalculateScaleProperties();
 		GetHighScore();
+		
+		_audioManager = GetComponentInChildren<AudioManager>();
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update () 
+	{
 	
 		if (sceneFramecount > 1)
 			//(!justLoadedScene)//to stop the loading time being counted by the deltatime and taken from the clock
@@ -50,10 +60,30 @@ public class GameManager : MonoBehaviour {
 			
 			if(stageIsPlay)
 			{
-				remainingStageTime -= Time.deltaTime;
+				//Debug.Log("COMPLETED: " + completedScene.ToString() + " DELAYED: " + completionDelay.ToString());
+				
+				if (!completedScene)
+				{
+					if (doorsCloseTimer <= 0) // the timer doesn't start until the doors are fully open
+					{
+						remainingStageTime -= Time.deltaTime;
+					}
+				}
+				else
+				{
+					if (delayForCompletion)
+					{
+						completionDelay += Time.deltaTime;
+						if (completionDelay >= 1)
+						{
+							delayForCompletion = false;
+							EndCurrentScene(); // this thing gives you 1 second after you win the game before it closes the doors
+						}
+					}
+				}
 				
 				
-				if(remainingStageTime <= -53 && !completedScene)
+				if(remainingStageTime <= 0 && !completedScene)
 				{
 					LoseScene();
 				}
@@ -75,6 +105,13 @@ public class GameManager : MonoBehaviour {
 			{
 				doorsCloseTimer -= Time.deltaTime;
 				doorsCloseTimer = Mathf.Max(doorsCloseTimer, 0);
+				if (doorsCloseTimer <= 0 && justLostGame)
+				{
+					if (!completedScene)
+					{
+						justLostGame = false;
+					}
+				}
 				if (doorsCloseTimer <= 0 && showGameOverGraphics)
 				{
 					showGameOverGraphics = false;
@@ -111,6 +148,14 @@ public class GameManager : MonoBehaviour {
 	
 	public static void EndCurrentScene()
 	{
+		nextSceneNumber = RandomSceneNumber();
+		if (returnToMainMenu)
+		{
+			nextSceneNumber = 0;
+			returnToMainMenu = false;
+		}
+		completionDelay = 0;
+		
 		doorsClose = true;
 		completedScene = true;
 		if (remainingLives <= 0)
@@ -119,30 +164,45 @@ public class GameManager : MonoBehaviour {
 		}
 		else
 		{
-			if (previousSceneNumber != 0 && !justLeftGameOver)
+			if (previousSceneNumber != 0 && !justLeftGameOver && !justLeftTitleScreen)
 			{
 				ShowThumbs();
 			}
 		}
 		
 		justLeftGameOver = false;
+		justLeftTitleScreen = false;
 	}
 	
 	public static void LoseScene()
 	{
-		remainingLives -= 1;
-		EndCurrentScene();
+		if (!completedScene)//note - this stops Win/Lose being called multiple times during the door transition
+		{
+			remainingLives -= 1;
+			//EndCurrentScene();
+			justLostGame = true;
+			
+			completedScene = true;
+			delayForCompletion = true;
+		}
 	}
 	
 	public static void WinScene()
 	{
-		score += 100;
-		SaveScore();
-		EndCurrentScene();
+		if (!completedScene)//note - this stops Win/Lose being called multiple times during the door transition
+		{
+			score += 100;
+			SaveScore();
+			//EndCurrentScene();
+			//now you wait for the completion timer
+			completedScene = true;
+			delayForCompletion = true;
+		}
 	}
 	
 	public static void StartScene()
 	{
+		//justLostGame = false;
 		completedScene = false;
 		doorsClose = false;
 		stageIsPlay = true; //set to false if it's title screen etc. Tells the timer to count down!
@@ -156,7 +216,7 @@ public class GameManager : MonoBehaviour {
 	{
 		waitForNextStageTimer += Time.fixedDeltaTime;
 		
-		if (waitForNextStageTimer >= 1)
+		if (waitForNextStageTimer >= 1 && !_audioManager.MusicSource.isPlaying)
 		{
 			LoadNextScene();
 			waitForNextStageTimer = 0;
@@ -187,6 +247,7 @@ public class GameManager : MonoBehaviour {
 	public static void ShowThumbs()
 	{
 		showThumbs = true;
+		_audioManager.PlayMusic(false, Time.timeScale);
 	}
 	
 	public static void HideThumbs()
@@ -213,6 +274,7 @@ public class GameManager : MonoBehaviour {
 	public static void ReturnToMenu()
 	{
 		justLeftGameOver = true;
+		returnToMainMenu = true;
 		
 		ResetPlayData();
 		nextSceneNumber = 0;
@@ -226,7 +288,7 @@ public class GameManager : MonoBehaviour {
 		justLeftGameOver = true;
 		
 		ResetPlayData();
-		nextSceneNumber = RandomSceneNumber();
+		//nextSceneNumber = RandomSceneNumber();
 		EndCurrentScene();
 	}
 	
@@ -247,7 +309,9 @@ public class GameManager : MonoBehaviour {
 	public static int RandomSceneNumber()
 	{
 		//will change once I have more scenes to choose from!!
-		return 2;
+		int myNextScene = 2;//Random.Range(2,4 + 1);
+		//Debug.Log("Next Scene: #" + myNextScene.ToString());
+		return myNextScene;
 	}
 	
 	public static void SaveScore()
@@ -270,6 +334,14 @@ public class GameManager : MonoBehaviour {
 		if (mySceneNum == 2)
 		{
 			return MoreGamesGUI.StudioHandle.SPILTMILK;
+		}
+		if (mySceneNum == 3)
+		{
+			return MoreGamesGUI.StudioHandle.AGAITCHESON;
+		}
+		if (mySceneNum == 4)
+		{
+			return MoreGamesGUI.StudioHandle.BIGPIXEL;
 		}
 		
 		return MoreGamesGUI.StudioHandle.endOfList;

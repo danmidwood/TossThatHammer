@@ -17,10 +17,16 @@ public class TitleGUI : MonoBehaviour {
 	private float creditsTimer;
 	private int currentCredit;
 	
+	public bool selectedNextPage;
+	public int nextPageNum;
+	public float pageTransTime;
+	
+	public SFX buttonPress;	
+	AudioManager _audioManager;
 	
 	// Use this for initialization
 	void Start () {
-
+		_audioManager = GetComponentInChildren<AudioManager>();
 	}
 	
 	// Update is called once per frame
@@ -64,12 +70,18 @@ public class TitleGUI : MonoBehaviour {
 		
 		if(GUI.Button(new Rect(100, 270, 370, 180), "", playButtonStyle))
 		{
-			StartGameTransition();
+			//StartGameTransition();
+			selectedNextPage = true;
+			nextPageNum = 0;
+			PlaySelectSound();
 		}
 		
 		if(GUI.Button(new Rect(490, 270, 370, 180), "", moreGamesButtonStyle))
 		{
-			GoToMoreGamesScene();
+			//GoToMoreGamesScene();
+			selectedNextPage = true;
+			nextPageNum = 1;
+			PlaySelectSound();
 		}
 		
 		GUI.Box(new Rect(58,455,844,85), GameManager.highScore.ToString(), scoreMeterStyle);		
@@ -78,6 +90,24 @@ public class TitleGUI : MonoBehaviour {
 		GUI.skin = null;
 		
 		GUIManager.ResetGUI();
+		
+		if (selectedNextPage)
+		{
+			pageTransTime += Time.deltaTime;
+			
+			if (pageTransTime > 0.2f)
+			{
+				if (nextPageNum == 1)
+				{
+					GoToMoreGamesScene();
+				}
+				else
+				{
+					StartGameTransition();
+				}
+			}
+
+		}
 	}
 	
 	
@@ -88,7 +118,13 @@ public class TitleGUI : MonoBehaviour {
 	
 	void StartGameTransition()
 	{
-			GameManager.nextSceneNumber = GameManager.RandomSceneNumber();
-			GameManager.EndCurrentScene();
+		GameManager.justLeftTitleScreen = true;
+		GameManager.nextSceneNumber = GameManager.RandomSceneNumber();
+		GameManager.EndCurrentScene();
+	}
+	
+	void PlaySelectSound()
+	{
+		_audioManager.PlaySFX(buttonPress);
 	}
 }
