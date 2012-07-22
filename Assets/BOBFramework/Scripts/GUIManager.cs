@@ -25,17 +25,17 @@ public class GUIManager : MonoBehaviour {
 	{
 		originalScaleMatrix = GUI.matrix;
 		
-		Debug.Log("Screen: " + Screen.width.ToString() + ", " + Screen.height.ToString());
+		//Debug.Log("Screen: " + Screen.width.ToString() + ", " + Screen.height.ToString());
 		
-		Debug.Log("X: " + (Screen.width / intendedWidth).ToString());
-		Debug.Log("Y: " + (Screen.height / intendedHeight).ToString());
+		//Debug.Log("X: " + (Screen.width / intendedWidth).ToString());
+		//Debug.Log("Y: " + (Screen.height / intendedHeight).ToString());
 		
 		float xScale = Screen.width / intendedWidth;
 		float yScale = Screen.height / intendedHeight;
 		
 		float scale = Mathf.Min(xScale, yScale);
 		
-		Debug.Log("SCALE: " + scale.ToString());
+		//Debug.Log("SCALE: " + scale.ToString());
 		
 		Vector3 scaleVec = new Vector3(scale,
 			scale,
@@ -64,7 +64,7 @@ public class GUIManager : MonoBehaviour {
 		
 		activeRect = new Rect(offsetVector.x / scale, offsetVector.y / scale, intendedWidth, intendedHeight);
 		
-		Debug.Log("Offset: " + offsetVector.x.ToString() + ", " + offsetVector.y.ToString());
+		//Debug.Log("Offset: " + offsetVector.x.ToString() + ", " + offsetVector.y.ToString());
 	}
 	
 	public static void SetUpGUI()
@@ -73,7 +73,7 @@ public class GUIManager : MonoBehaviour {
 		GUI.matrix = GUIManager.scaleMatrix;
 		
 		GUI.BeginGroup(activeRect);	
-		Debug.Log("Active rect = " + activeRect.ToString());
+		//Debug.Log("Active rect = " + activeRect.ToString());
 		
 		GUI.matrix = GUIManager.scaleMatrix;
 		
