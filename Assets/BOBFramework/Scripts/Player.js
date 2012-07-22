@@ -5,6 +5,8 @@ var touchLocationLabel2 : GUIText;
 var speed = 1;
 var touchCount = 0;
 
+var scoreBoard: GameObject;
+
 function Start () {
 
 	var circle = GameObject.Find("base");
@@ -42,6 +44,17 @@ function touchPositionToWorldLocation(position: Vector3) {
 }
 
 
+
+function up(gameObject :GameObject) {
+	var points = 1;
+	if (gameObject.transform.localScale.y < 100)
+	{
+		gameObject.transform.localScale += Vector3(0, points, 0); 
+	 	gameObject.transform.position += Vector3(0, 0, points);
+	}
+}
+
+
 function Update () {
 	if (Input.touchCount > 0 && 
       (Input.GetTouch(0).phase == TouchPhase.Moved || Input.GetTouch(0).phase == TouchPhase.Stationary)) {
@@ -72,8 +85,7 @@ function Update () {
         	// transform.Translate (touchDeltaPosition.x * speed, 0, touchDeltaPosition.y * speed);	
 
         	if ( inNorthWest(hit.collider.gameObject, hit.point)) {
-        		Debug.Log("Disappearing");
-        		hit.collider.renderer.enabled = false;
+        		up(scoreBoard);
         	}
          
         }
