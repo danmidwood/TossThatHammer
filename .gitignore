@@ -1,5 +1,4 @@
 Temp/
-Library/
 obj/
 *.svd
 *.exe
@@ -8,7 +7,8 @@ obj/
 *.user
 *.pidb
 *.userprefs
-
+Library/cache
+Library/previews
 !Library/*.asset
 !Library/AssetImportState
 !Library/AssetVersioning.db
