@@ -4,6 +4,7 @@ var touchLocationLabel : GUIText;
 var touchLocationLabel2 : GUIText;
 var speed = 1;
 var touchCount = 0;
+var spinSpeed : float = 1;
 
 var scoreBoard: GameObject;
 
@@ -33,6 +34,10 @@ function inSouthEast(x: float, z:float) {
 	return x > 0 && z < 0;
 }
 
+function dontMatch(x: float, z: float) {
+	return false;
+}
+
 
 
 var zoneFunctions : Array = new Array();
@@ -43,9 +48,9 @@ function nextZone() {
 	chosenZoneFunctionId = (chosenZoneFunctionId + 1) % 4;
 }
 
-function currentZoneFunction() {
+var currentZoneFunction = function() {
 	return zoneFunctions[chosenZoneFunctionId];
-}
+};
 
 function inZone(gameObject : GameObject, touchPosition : Vector3, criteria: Function )
 {
@@ -75,8 +80,24 @@ function up(gameObject :GameObject) {
 		gameObject.SendMessage("up");
 }
 
+function winned() {
+	currentZoneFunction = function () { return dontMatch; };
+	MutableUpdate = Spin;
+}
 
-function Update () {
+var Spin = function() {	
+	gameObject.transform.Rotate(0, 0 - spinSpeed, 0);
+	spinSpeed = spinSpeed + 1;
+};
+
+
+
+function Update(){
+	MutableUpdate();
+}
+
+var MutableUpdate = function() {
+
 	if (Input.touchCount > 0 && 
       (Input.GetTouch(0).phase == TouchPhase.Moved || Input.GetTouch(0).phase == TouchPhase.Stationary)) {
     
@@ -107,6 +128,7 @@ function Update () {
 
         	if ( inZone(hit.collider.gameObject, hit.point, currentZoneFunction())) {
         		nextZone();
+        		Spin();
         		up(scoreBoard);
         	}
          
@@ -116,4 +138,4 @@ function Update () {
 
 	 }	
         
-}
+};

@@ -4,6 +4,7 @@
 var points = 80;
 var handicap = 0.05;
 var hammer : GameObject;
+var base : GameObject;
 
 function Start () {
 
@@ -34,5 +35,6 @@ function up()
 	{
 		hammer.SetActiveRecursively(true);
 		gameObject.SendMessage("Win");
+		base.SendMessage("winned");
 	}
 }

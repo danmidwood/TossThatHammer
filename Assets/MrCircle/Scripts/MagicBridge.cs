@@ -3,16 +3,6 @@ using System.Collections;
 
 public class MagicBridge : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
-
 	void Win() {
 		GameManager.WinScene();
 	}
