@@ -1,7 +1,7 @@
 #pragma strict
 
-var counter : int = 0;
-var blinkSpeed : int = 20;
+private var counter : int = 0;
+private var blinkSpeed : int = 20;
 
 
 
@@ -10,7 +10,7 @@ function Start () {
 }
 
 function Update () {
-	if (counter > 200 && !gameObject.renderer.enabled)
+	if (counter > 150 && !gameObject.renderer.enabled)
 	{
 		Destroy(gameObject);
 	}

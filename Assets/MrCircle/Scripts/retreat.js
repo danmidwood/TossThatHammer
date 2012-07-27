@@ -9,13 +9,13 @@ function Start () {
 }
 
 function Update () {
-	if (counter > 50 && !gameObject.renderer.enabled)
+	if (counter > 60 && !gameObject.renderer.enabled)
 	{
 		Destroy(gameObject);
 	}
-	else if (counter > 30)
+	else if (counter > 50)
 	{
-		gameObject.transform.position += Vector3(0, 10, 0);
+		gameObject.transform.position += Vector3(0, 5, 0);
 	}
 	counter = counter + 1;
 
