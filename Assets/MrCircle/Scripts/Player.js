@@ -2,11 +2,13 @@
 
 var touchLocationLabel : GUIText;
 var touchLocationLabel2 : GUIText;
-var speed = 1;
-var touchCount = 0;
-var spinSpeed : float = 1;
-
-var scoreBoard: GameObject;
+private var speed :int = 1;
+private var touchCount :int = 0;
+private var spinSpeed : int = 1;
+private var winCriteria : int = 50;
+private var spincrease : int = 1;
+var spinner : GameObject;
+var hammer : GameObject;
 
 function Start () {
 
@@ -76,18 +78,22 @@ function touchPositionToWorldLocation(position: Vector3) {
 
 
 
-function up(gameObject :GameObject) {
-		gameObject.SendMessage("up");
+function levelUp() {
+	spinSpeed = spinSpeed + spincrease;
 }
 
-function winned() {
+function Winned() {
+	hammer.SetActiveRecursively(true);
+	hammer.SendMessage("Throw");
+    gameObject.SendMessage("Win");
 	currentZoneFunction = function () { return dontMatch; };
+	spincrease = 0.05;
 	MutableUpdate = Spin;
 }
 
 var Spin = function() {	
-	gameObject.transform.Rotate(0, 0 - spinSpeed, 0);
-	spinSpeed = spinSpeed + 1;
+	// gameObject.SendMessage("Point");
+	spinner.transform.Rotate(0, 0 - spinSpeed, 0);
 };
 
 
@@ -96,7 +102,7 @@ function Update(){
 	MutableUpdate();
 }
 
-var MutableUpdate = function() {
+var MutableUpdate : Function = function (){
 
 	if (Input.touchCount > 0 && 
       (Input.GetTouch(0).phase == TouchPhase.Moved || Input.GetTouch(0).phase == TouchPhase.Stationary)) {
@@ -129,7 +135,13 @@ var MutableUpdate = function() {
         	if ( inZone(hit.collider.gameObject, hit.point, currentZoneFunction())) {
         		nextZone();
         		Spin();
-        		up(scoreBoard);
+        		levelUp();
+        		positionDebugText = positionDebugText + "\nSpin Speed: " + spinSpeed;
+        		if (spinSpeed > winCriteria) {
+        			touchLocationLabel.text = "\nSpin Speed: " + spinSpeed + "\nWin Criteria: " + winCriteria;
+        			Winned();
+        		}
+
         	}
          
         }
