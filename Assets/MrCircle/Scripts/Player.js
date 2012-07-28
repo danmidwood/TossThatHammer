@@ -9,6 +9,8 @@ private var winCriteria : int = 50;
 private var spincrease : int = 1;
 var spinner : GameObject;
 var hammer : GameObject;
+var background : GameObject;
+var logo : GameObject;
 
 function Start () {
 
@@ -131,7 +133,11 @@ var MutableUpdate : Function = function (){
         
         	// Move object across XY plane
         	// transform.Translate (touchDeltaPosition.x * speed, 0, touchDeltaPosition.y * speed);	
-
+        	if (hit.collider.gameObject.name == background.name) {
+        		logo.active = (true);
+				logo.SendMessage("Flash");
+		    }
+        	
         	if ( inZone(hit.collider.gameObject, hit.point, currentZoneFunction())) {
         		nextZone();
         		Spin();
