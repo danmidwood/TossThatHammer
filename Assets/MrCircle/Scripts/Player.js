@@ -6,7 +6,7 @@ private var speed :int = 1;
 private var touchCount :int = 0;
 private var spinSpeed : int = 1;
 private var winCriteria : int = 50;
-private var spincrease : int = 1;
+private var spincrease : int = 2;
 var spinner : GameObject;
 var hammer : GameObject;
 var background : GameObject;
