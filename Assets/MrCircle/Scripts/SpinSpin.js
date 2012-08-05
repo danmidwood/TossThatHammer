@@ -15,9 +15,6 @@ function Update () {
 	{
 		Destroy(gameObject);
 	}
-	if ((counter < 40 || counter > 100) && counter % blinkSpeed == 0){
-		gameObject.renderer.enabled = !gameObject.renderer.enabled;
-	}
 	counter = counter + 1;
 
 }
