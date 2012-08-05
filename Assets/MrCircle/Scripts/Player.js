@@ -2,13 +2,16 @@
 
 var touchLocationLabel : GUIText;
 var touchLocationLabel2 : GUIText;
-private var speed :int = 1;
-private var touchCount :int = 0;
-private var spinSpeed : int = 1;
-private var winCriteria : int = 50;
-private var spincrease : int = 2;
 var spinner : GameObject;
 var hammer : GameObject;
+
+private var spinSpeed : int = 10;
+private var spincrease : int = 40;
+private var noOfSpinsToWin = 6;
+private var touchesToWin = noOfSpinsToWin * 4;
+private var noOfTouches = 0;
+private var zoneFunctions : Array = new Array();
+private var chosenZoneFunctionId : int = 0;
 
 function Start () {
 
@@ -42,9 +45,6 @@ function dontMatch(x: float, z: float) {
 
 
 
-var zoneFunctions : Array = new Array();
-
-var chosenZoneFunctionId : int = 0;
 
 function nextZone() {
 	chosenZoneFunctionId = (chosenZoneFunctionId + 1) % 4;
@@ -80,6 +80,7 @@ function touchPositionToWorldLocation(position: Vector3) {
 
 function levelUp() {
 	spinSpeed = spinSpeed + spincrease;
+	noOfTouches = noOfTouches + 1;
 }
 
 function Winned() {
@@ -87,13 +88,14 @@ function Winned() {
 	hammer.SendMessage("Throw");
     gameObject.SendMessage("Win");
 	currentZoneFunction = function () { return dontMatch; };
-	spincrease = 0.05;
-	MutableUpdate = Spin;
+	MutableUpdate = function () { 
+		spinSpeed = spinSpeed + (Time.deltaTime * 20 * spincrease);
+	    Spin();
+	};
 }
 
 var Spin = function() {	
-	// gameObject.SendMessage("Point");
-	spinner.transform.Rotate(0, 0 - spinSpeed, 0);
+	spinner.transform.Rotate(0, Time.deltaTime * (0 - spinSpeed), 0);
 };
 
 
@@ -103,6 +105,8 @@ function Update(){
 }
 
 var MutableUpdate : Function = function (){
+
+	Spin();
 
 	if (Input.touchCount > 0 && 
       (Input.GetTouch(0).phase == TouchPhase.Moved || Input.GetTouch(0).phase == TouchPhase.Stationary)) {
@@ -121,23 +125,13 @@ var MutableUpdate : Function = function (){
 		
 		var hit : RaycastHit;
 		if (Physics.Raycast (ray, hit)) {
-			touchCount = touchCount + 1;
-
-			positionDebugText = positionDebugText + "\nTouch Count: " + touchCount;
-			positionDebugText = positionDebugText + "\nHit: " + hit.collider.gameObject.name;
-
-		      // Get movement of the finger since last frame
+			// Get movement of the finger since last frame
         	var touchDeltaPosition:Vector2 = Input.GetTouch(0).deltaPosition;
         
-        	// Move object across XY plane
-        	// transform.Translate (touchDeltaPosition.x * speed, 0, touchDeltaPosition.y * speed);	
         	if ( inZone(gameObject, hit.point, currentZoneFunction())) {
         		nextZone();
-        		Spin();
         		levelUp();
-        		positionDebugText = positionDebugText + "\nSpin Speed: " + spinSpeed;
-        		if (spinSpeed > winCriteria) {
-        			touchLocationLabel.text = "\nSpin Speed: " + spinSpeed + "\nWin Criteria: " + winCriteria;
+        		if (noOfTouches > touchesToWin) {
         			Winned();
         		}
 
