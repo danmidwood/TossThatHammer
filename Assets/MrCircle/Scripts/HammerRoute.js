@@ -8,7 +8,7 @@ private var hammerRotateX : float = 0.2 * 40;
 private var hammerRotateY : float = -5 * 40;
 private var hammerRotateZ : float = 0 * 40;
 
-private var hammerMoveX : float = 2.5 * 40;
+private var hammerMoveX : float = 4.5 * 40;
 private var hammerMoveY : float = 1 * 40;
 private var hammerMoveZ : float = 0 * 40;
 
@@ -16,7 +16,7 @@ private var cameraRotateX : float = 0 * 40;
 private var cameraRotateY : float = 0.05 * 40;
 private var cameraRotateZ : float = 0 * 40;
 
-private var cameraMoveX : float = 1.5 * 40;
+private var cameraMoveX : float = 3.5 * 40;
 private var cameraMoveY : float = 2.25 * 40;
 private var cameraMoveZ : float = 0 * 40;
 
