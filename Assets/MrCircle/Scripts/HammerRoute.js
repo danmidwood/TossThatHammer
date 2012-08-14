@@ -39,5 +39,5 @@ function Update () {
  function Throw() {
  	thrown = true;
  	gameObject.transform.parent = null;
- 	gameObject.transform.position = Vector3(-10, 0, 0);
+ 	gameObject.transform.position = Vector3(-30, 0, 0);
  }
