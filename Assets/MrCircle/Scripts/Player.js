@@ -87,11 +87,15 @@ function Winned() {
 	hammer.SetActiveRecursively(true);
 	hammer.SendMessage("Throw");
     gameObject.SendMessage("Win");
-	currentZoneFunction = function () { return dontMatch; };
-	MutableUpdate = function () { 
+    MutableUpdate = function () { 
 		spinSpeed = spinSpeed + (Time.deltaTime * 20 * spincrease);
 	    Spin();
 	};
+	GameOver();
+}
+
+function GameOver() {
+	currentZoneFunction = function () { return dontMatch; };
 }
 
 var Spin = function() {	
